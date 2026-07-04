@@ -3,7 +3,7 @@ name: Cloudflare Pages CI/CD
 on:
   push:
     branches:
-      - main  # 当你把代码 push 到 main 分支时触发
+      - main
 
 jobs:
   deploy:
@@ -15,9 +15,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 【新增步骤】打印一下当前目录下的文件，看看是不是空文件夹
+      - name: List Files (Debug)
+        run: ls -la
+
       - name: Publish to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy . --project-name=floral-mouse-ffa9 # 换成你创建的Pages名字
+          # 【核心修改】去掉了内置的 deploy 参数，改用下面的常规 command，方便捕获最底层的具体错误
+          command: pages deploy . --project-name=gothic-remake-lock-solver  # ⚠️记得把这里改成你网页后台建好的项目名！
