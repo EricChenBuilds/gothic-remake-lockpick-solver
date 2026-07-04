@@ -1,0 +1,7 @@
+# 临时预览截图
+_preview*.png
+_preview_*.png
+# 编辑器 / 系统
+.DS_Store
+.vscode/
+.idea/

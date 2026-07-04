@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="The ultimate gothic 1 remake lockpicking tool and gothic remake lockpicking solver. This advanced gothic lockpick solver works as a real-time gothic 1 remake lock solver and interactive gothic remake lock solver. If you need a reliable gothic lock solver or a smart gothic 1 remake lockpicking solver, our gothic remake lockpicking tool helps you decrypt linkages instantly. Safely optimize every chest puzzle with the best gothic remake lockpick solver and gothic 1 remake lockpick solver today!">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>Gothic 1 Remake Lockpicking Solver | Gothic Lockpick & Lock Solver Tool</title>
+  <style>
+    /* ========================================================
+     * 深色游戏风格
+     * 配色：背景 #0a0a14，绿色高亮 #5be88a（目标态），橙色高亮 #f0a040（选中态）
+     * ======================================================== */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0a0a14;
+      color: #d0d0e0;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 8px;
+      color: #e8d090;
+      letter-spacing: 4px;
+      font-weight: 600;
+    }
+    h3 {
+      font-size: 13px;
+      margin: 0 0 12px;
+      color: #aaa;
+      letter-spacing: 3px;
+      font-weight: 600;
+    }
+    .subtitle { color: #888; font-size: 13px; margin: 0 0 20px; }
+    .subtitle b { color: #e8d090; }
+    .container { max-width: 1400px; margin: 0 auto; }
+
+    /* ---------- 2:1 布局 ---------- */
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 28px;
+    }
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- 左侧：主区 ---------- */
+    .main-col { min-width: 0; }
+
+    .controls-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+    }
+    .controls-row label {
+      font-size: 13px; color: #888;
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .controls-row select { display: none; }
+    .plates-inline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .plates-label {
+      font-size: 13px;
+      color: #888;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+    .seg-group { display: inline-flex; gap: 8px; }
+    .seg-btn {
+      background: #15121e;
+      color: #888;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      border-radius: 8px;
+      transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.08s;
+    }
+    .seg-btn:hover {
+      background: #1f1c2e;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #d0d0e0;
+    }
+    .seg-btn:active { transform: scale(0.95); }
+    .seg-btn.active {
+      background: transparent;
+      border-color: #d4a040;
+      color: #d4a040;
+      box-shadow: 0 0 10px rgba(212, 160, 64, 0.35);
+    }
+    .controls-row .seg-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 14px;
+    }
+    .reset-btn {
+      background: transparent;
+      color: #888;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .reset-btn:hover {
+      background: #1f1c2e;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #d0d0e0;
+    }
+
+    /* ---------- 标题栏 + HOW IT WORKS 按钮 ---------- */
+    .title-bar {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .title-text {
+      flex: 0 0 auto;
+      width: max-content;
+    }
+    .how-btn {
+      padding: 8px 14px;
+      background: #1a1a2e;
+      color: #888;
+      border: 1px solid #3a3a4e;
+      border-radius: 6px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      margin-top: 4px;
+      margin-left: 60px;
+      white-space: nowrap;
+      font-weight: bold;
+      text-align: left;
+    }
+    .how-btn:hover {
+      background: #1f1c2e;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #d0d0e0;
+    }
+
+    /* ---------- Modal ---------- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 24px;
+    }
+    .modal-content {
+      background: #15121e;
+      border: 1px solid #3a3a4e;
+      border-radius: 12px;
+      padding: 24px 24px 20px;
+      max-width: 780px;
+      max-height: calc(100vh - 48px);
+      width: 100%;
+      position: relative;
+      overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: #888;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 10px;
+      line-height: 1;
+    }
+    .modal-close:hover { color: #ff7755; }
+    .modal-content h2 {
+      margin: 8px 0 16px;
+      color: #e8d090;
+      letter-spacing: 3px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .modal-content p {
+      color: #aaa;
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 0 0 10px;
+    }
+    .modal-content p:last-child {
+      margin-bottom: 0;
+    }
+    .modal-content .how-img {
+      display: block;
+      width: 100%;
+      max-height: 360px;
+      object-fit: contain;
+      border-radius: 8px;
+      margin: 16px 0;
+      background: #0a0a14;
+    }
+    .modal-content .how-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .modal-content .how-section h3 {
+      font-size: 12px;
+      color: #d4a040;
+      letter-spacing: 2px;
+      margin: 0 0 8px;
+      font-weight: 600;
+    }
+    .modal-content .how-section p {
+      margin: 0 0 8px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .modal-content .how-section p:last-child {
+      margin-bottom: 0;
+    }
+    .pos-circle.mini {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-width: 2px;
+      cursor: default;
+      vertical-align: middle;
+      margin-right: 6px;
+      background: transparent;
+    }
+    .pos-circle.mini.is-start {
+      border-color: #d4a040;
+      box-shadow: 0 0 12px rgba(212, 160, 64, 0.7);
+    }
+    .pos-circle.mini.is-target {
+      border-color: #5be88a;
+      box-shadow: 0 0 12px rgba(91, 232, 138, 0.7);
+    }
+    .link-cell.mini {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-width: 1px;
+      font-size: 9px;
+      cursor: default;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    /* ---------- Plate 输入行（左侧，每行嵌 LINKS） ---------- */
+    .plate-row {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 7px 14px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .plate-num {
+      color: #999;
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .positions {
+      display: flex;
+      gap: 20px;
+      flex: 1;
+      justify-content: center;
+    }
+    .pos-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .pos-circle {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: transparent;
+      border: 2px solid #3a3a4e;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.15s;
+    }
+    .pos-circle:hover { border-color: #6a6a8e; }
+    .pos-circle.active.is-target {
+      border-color: #5be88a;
+      box-shadow: 0 0 12px rgba(91, 232, 138, 0.7);
+      background: rgba(91, 232, 138, 0.08);
+    }
+    .pos-circle.active.is-other {
+      border-color: #f0a040;
+      box-shadow: 0 0 12px rgba(240, 160, 64, 0.7);
+      background: rgba(240, 160, 64, 0.08);
+    }
+    .pos-num {
+      font-size: 9px;
+      color: #666;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+
+    /* ---------- LINKS 块（嵌在 plate 行右侧） ---------- */
+    .links-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 0;
+    }
+    .links-label {
+      font-size: 9px;
+      color: #666;
+      letter-spacing: 1.5px;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+    .link-cells {
+      display: flex;
+      gap: 4px;
+    }
+    .link-cell-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .link-cell {
+      width: 22px; height: 22px;
+      border-radius: 4px;
+      background: transparent;
+      border: 1px solid #2a2a3a;
+      cursor: pointer;
+      padding: 0;
+      font-size: 11px;
+      font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .link-cell.none { color: #4a4a5a; border-color: #2a2a3a; }
+    .link-cell.none:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: #3a3a4e;
+    }
+    .link-cell.same {
+      color: #5be88a;
+      border-color: #5be88a;
+      background: rgba(91, 232, 138, 0.12);
+      box-shadow: 0 0 8px rgba(91, 232, 138, 0.4);
+    }
+    .link-cell.opposite {
+      color: #ff7755;
+      border-color: #ff7755;
+      background: rgba(255, 119, 85, 0.12);
+      box-shadow: 0 0 8px rgba(255, 119, 85, 0.4);
+    }
+    .link-cell.self {
+      color: #3a3a4a;
+      cursor: not-allowed;
+      background: rgba(0, 0, 0, 0.25);
+      border-color: #1f1f2e;
+    }
+    .link-cell-num {
+      font-size: 9px;
+      color: #666;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+
+    /* ---------- SOLVE LOCK 大按钮 ---------- */
+    .solve-lock-btn {
+      width: 100%;
+      padding: 20px;
+      margin-top: 8px;
+      background: #15121e;
+      border: 1px solid #d4a040;
+      border-radius: 10px;
+      color: #d0d0e0;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .solve-lock-btn:hover {
+      background: #1f1c2e;
+      border-color: #f0a040;
+      box-shadow: 0 0 16px rgba(240, 160, 64, 0.2);
+    }
+    .solve-lock-btn:active { transform: scale(0.99); }
+    .solve-lock-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* ---------- 状态 / 结果 ---------- */
+    #solveStatus {
+      display: block;
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+      margin-top: 14px;
+      min-height: 20px;
+      letter-spacing: 1px;
+    }
+    #stepsList {
+      margin: 16px 0 0;
+      padding-left: 24px;
+    }
+    #stepsList li {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #c0c0d0;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+
+    /* ---------- 右侧：侧栏（CHESTS + SOLUTION） ---------- */
+    .side-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
+    }
+    .side-panel {
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+    }
+    .side-panel .hint { color: #888; font-size: 12px; margin: 0 0 12px; line-height: 1.5; }
+    .side-panel .error { color: #ff7755; font-size: 12px; margin: 8px 0 0; }
+    .side-panel .empty { color: #888; font-size: 12px; margin: 8px 0 0; }
+
+    .side-panel input[type="text"] {
+      width: 100%;
+      background: #15121e;
+      color: #d0d0e0;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px;
+      margin-bottom: 8px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .side-panel input[type="text"]:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    .side-panel input[type="text"]:focus {
+      outline: none;
+      border-color: #d4a040;
+      background: #1f1c2e;
+    }
+    .side-panel input[type="text"]::placeholder {
+      color: #5a5a6e;
+    }
+    .save-chest-btn {
+      width: 100%;
+      padding: 10px;
+      background: #15121e;
+      color: #d0d0e0;
+      border: 1px solid #d4a040;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .save-chest-btn:hover {
+      background: #1f1c2e;
+      border-color: #f0a040;
+    }
+    .chests-list {
+      list-style: none;
+      margin: 12px 0 0;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .chests-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      font-size: 13px;
+      color: #d0d0e0;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .chests-list li:hover {
+      background: #1f1c2e;
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    .chests-list li button {
+      background: transparent;
+      color: #888;
+      border: none;
+      cursor: pointer;
+      padding: 2px 6px;
+      font-size: 12px;
+    }
+    .chests-list li button:hover { color: #ff7755; }
+    .chests-list li .chest-name {
+      cursor: pointer;
+      flex: 1;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .chests-list li:hover .chest-name { color: #d4a040; }
+    .chests-list li .chest-step {
+      color: #888;
+      font-size: 11px;
+      font-weight: normal;
+      letter-spacing: 0;
+    }
+
+    .sol-display {
+      min-height: 60px;
+      padding: 10px;
+      background: #0a0a14;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      color: #d0d0e0;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sol-display.empty {
+      color: #888;
+      font-size: 12px;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .sol-display .move-step {
+      display: block;
+      margin: 0;
+      padding: 12px 16px;
+      background: #15121e;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      color: #d0d0e0;
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+    }
+    .sol-display .step-num {
+      color: #888;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title-bar">
+      <div class="title-text">
+        <h1>Gothic Remake Lockpick Solver</h1>
+        <p class="subtitle">Set up a lock, then press <b>Solve</b> for the shortest click sequence.</p>
+      </div>
+      <button class="how-btn" id="howBtn" type="button">HOW IT WORKS</button>
+    </div>
+
+    <!-- HOW IT WORKS 弹窗 -->
+    <div class="modal-backdrop" id="howModal" style="display:none">
+      <div class="modal-content" role="dialog" aria-labelledby="howModalTitle">
+        <button class="modal-close" id="howModalClose" type="button" aria-label="Close">×</button>
+        <h2 id="howModalTitle">HOW IT WORKS</h2>
+        <p>
+          In the game, the metal plates are stacked together — the closest is <b>Plate 1</b>, and the farthest has the largest number. These plate numbers also correspond to the plate sequence on this website.
+        </p>
+        <p>
+          Each plate has <b>7 holes</b>. <b>Hole 1 to Hole 7</b> are arranged from left to right.
+        </p>
+        <img class="how-img" src="image.png" alt="Lockpicking puzzle reference">
+        <div class="how-grid">
+          <div class="how-section">
+            <h3>HOLES (1–7)</h3>
+            <p>Each plate has 7 holes. Click to select the <b>start pin</b> position; the target position defaults to <b>Hole 4</b>.</p>
+            <p><span class="pos-circle mini is-start"></span> <b>Start pin</b> — click to set the start position</p>
+            <p><span class="pos-circle mini is-target"></span> <b>Target pin</b> — the target position (default Hole 4, no need to set)</p>
+          </div>
+          <div class="how-section">
+            <h3>LINK GRID</h3>
+            <p>Each plate has a small grid on its right. Each column in the grid points to another plate. Click a cell to cycle through the following options:</p>
+            <p><span class="link-cell mini none">·</span> <b>None</b> — does not affect that plate</p>
+            <p><span class="link-cell mini same">S</span> <b>Same</b> — the affected plate moves in the same direction</p>
+            <p><span class="link-cell mini opposite">O</span> <b>Opposite</b> — the affected plate moves in the opposite direction</p>
+          </div>
+        </div>
+      
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- 左侧 2/3：主交互区 -->
+      <main class="main-col">
+        <div class="controls-row">
+          <div class="plates-inline">
+            <span class="plates-label">PLATES</span>
+            <div class="seg-group" id="plateCountSeg" role="radiogroup" aria-label="Number of plates">
+              <button type="button" class="seg-btn" data-value="4" role="radio" aria-checked="false">4</button>
+              <button type="button" class="seg-btn" data-value="5" role="radio" aria-checked="false">5</button>
+              <button type="button" class="seg-btn active" data-value="6" role="radio" aria-checked="true">6</button>
+              <button type="button" class="seg-btn" data-value="7" role="radio" aria-checked="false">7</button>
+            </div>
+          </div>
+          <button class="reset-btn" id="resetBtn" type="button">RESET</button>
+        </div>
+
+        <div id="plateRows"></div>
+
+        <button class="solve-lock-btn" id="solveBtn" type="button">SOLVE LOCK</button>
+        <span id="solveStatus"></span>
+        <ul id="stepsList" style="display:none"></ul>
+      </main>
+
+      <!-- 右侧 1/3：侧栏 -->
+      <aside class="side-col">
+        <!-- SOLUTION 面板 -->
+        <section class="side-panel" id="solutionPanel">
+          <h3>SOLUTION</h3>
+          <p class="hint">Shortest legal move sequence. Consecutive identical presses are grouped.</p>
+          <div class="sol-display" id="solDisplay">Set a start pin on card 1</div>
+        </section>
+
+        <!-- CHESTS 面板 -->
+        <section class="side-panel" id="chestsPanel">
+          <h3>CHESTS</h3>
+          <p class="hint">Save and reload lock setups by name.</p>
+          <input type="text" id="chestName" placeholder="Chest name" maxlength="40">
+          <button class="save-chest-btn" id="saveChestBtn" type="button">Save chest</button>
+          <p class="error" id="chestError" style="display:none">Enter a chest name to save solution</p>
+          <p class="empty" id="chestsEmpty">No saved chests yet</p>
+          <ul class="chests-list" id="chestsList"></ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+  /* ============================================================
+   * 哥特王朝重制版 - 开锁解密器
+   * 单文件 + 内联 Web Worker (Blob URL)
+   * 求解模式：fewer-switches（少 plate 切换），复合 cost (groups, moves)
+   * ============================================================ */
+
+  const MIN_POS = 1;
+  const MAX_POS = 7;
+  const TARGET = 4;
+  const CHESTS_KEY = 'gothic-remake-lockbreaker-chests-v1';
+  let N = 6;
+  let lastSolution = null;   // 最近一次求解结果
+
+  const state = {
+    start: [TARGET, TARGET, TARGET, TARGET, TARGET, TARGET],
+    effects: { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }
+  };
+
+  /* ---------- 渲染：每行 plate + 7 位置 + LINKS 6 cell ---------- */
+  function buildPlateRows() {
+    const container = document.getElementById('plateRows');
+    container.innerHTML = '';
+    for (let i = 0; i < N; i++) {
+      if (!state.effects[i]) state.effects[i] = {};
+      const currentPos = state.start[i] ?? TARGET;
+
+      const row = document.createElement('div');
+      row.className = 'plate-row';
+
+      // 左：plate 编号
+      const num = document.createElement('span');
+      num.className = 'plate-num';
+      num.textContent = String(i + 1);
+      row.appendChild(num);
+
+      // 中：7 个位置圆圈
+      const positions = document.createElement('div');
+      positions.className = 'positions';
+      for (let pos = MIN_POS; pos <= MAX_POS; pos++) {
+        const wrap = document.createElement('div');
+        wrap.className = 'pos-wrap';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pos-circle';
+        btn.dataset.pos = String(pos);
+        // 位置 4 始终是 target pin（绿色）
+        if (pos === TARGET) {
+          btn.classList.add('active', 'is-target');
+        }
+        // 用户选的 start pin（如果不是位置 4）
+        if (pos === currentPos && pos !== TARGET) {
+          btn.classList.add('active', 'is-other');
+        }
+        btn.addEventListener('click', () => {
+          state.start[i] = pos;
+          positions.querySelectorAll('.pos-circle').forEach((b) => {
+            const p = parseInt(b.dataset.pos, 10);
+            // 重置 active 相关 class
+            b.classList.remove('active', 'is-target', 'is-other');
+            // 位置 4 始终是 target
+            if (p === TARGET) {
+              b.classList.add('active', 'is-target');
+            }
+            // 选中的位置是 start（如果不是 4）
+            if (p === pos && p !== TARGET) {
+              b.classList.add('active', 'is-other');
+            }
+          });
+        });
+        wrap.appendChild(btn);
+
+        const label = document.createElement('span');
+        label.className = 'pos-num';
+        label.textContent = String(pos);
+        wrap.appendChild(label);
+
+        positions.appendChild(wrap);
+      }
+      row.appendChild(positions);
+
+      // 右：LINKS 块
+      const linksBlock = document.createElement('div');
+      linksBlock.className = 'links-block';
+
+      const linksLabel = document.createElement('span');
+      linksLabel.className = 'links-label';
+      linksLabel.textContent = 'LINKS';
+      linksBlock.appendChild(linksLabel);
+
+      const linkCells = document.createElement('div');
+      linkCells.className = 'link-cells';
+      // 7 列：包含对角线 self（置灰不可点击）
+      for (let j = 0; j < N; j++) {
+        const wrap = document.createElement('div');
+        wrap.className = 'link-cell-wrap';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'link-cell';
+        btn.dataset.src = String(i);
+        btn.dataset.target = String(j);
+
+        if (i === j) {
+          // 对角线：self，置灰 + 短横杠 + 不可点击
+          btn.classList.add('self');
+          btn.textContent = '—';
+          btn.disabled = true;
+        } else {
+          const rel = state.effects[i]?.[j];
+          applyLinkStyle(btn, rel);
+          btn.addEventListener('click', () => {
+            cycleRelation(i, j);
+            applyLinkStyle(btn, state.effects[i]?.[j]);
+          });
+        }
+        wrap.appendChild(btn);
+
+        const label = document.createElement('span');
+        label.className = 'link-cell-num';
+        label.textContent = String(j + 1);
+        wrap.appendChild(label);
+
+        linkCells.appendChild(wrap);
+      }
+      linksBlock.appendChild(linkCells);
+
+      row.appendChild(linksBlock);
+      container.appendChild(row);
+    }
+  }
+
+  function applyLinkStyle(btn, relation) {
+    btn.classList.remove('none', 'same', 'opposite');
+    if (relation === 'same') {
+      btn.classList.add('same');
+      btn.textContent = 'S';
+    } else if (relation === 'opposite') {
+      btn.classList.add('opposite');
+      btn.textContent = 'O';
+    } else {
+      btn.classList.add('none');
+      btn.textContent = '·';
+    }
+  }
+
+  function cycleRelation(src, target) {
+    const current = state.effects[src]?.[target];
+    if (!state.effects[src]) state.effects[src] = {};
+    if (!current) {
+      state.effects[src][target] = 'same';
+    } else if (current === 'same') {
+      state.effects[src][target] = 'opposite';
+    } else {
+      delete state.effects[src][target];
+    }
+  }
+
+  /* ---------- 数据读取 ---------- */
+  function readStartState() { return state.start.slice(); }
+  function readEffects() { return JSON.parse(JSON.stringify(state.effects)); }
+
+  /* ---------- Worker 源码（少切换 BFS） ---------- */
+  const WORKER_SOURCE = `
+    const MIN_POS = 1;
+    const MAX_POS = 7;
+    const TARGET = 4;
+    const TIMEOUT_MS = 30000;
+
+    function isGoal(values) {
+      for (let i = 0; i < values.length; i++) {
+        if (values[i] !== TARGET) return false;
+      }
+      return true;
+    }
+
+    function applyMove(values, plate, direction, effects) {
+      const delta = (direction === 'right') ? 1 : -1;
+      const next = new Array(values.length);
+      for (let i = 0; i < next.length; i++) next[i] = values[i];
+
+      next[plate] += delta;
+
+      const fx = effects[plate] || {};
+      for (const targetStr of Object.keys(fx)) {
+        const target = Number(targetStr);
+        const relation = fx[targetStr];
+        const amount = (relation === 'same') ? delta : -delta;
+        next[target] += amount;
+      }
+
+      for (let i = 0; i < next.length; i++) {
+        if (next[i] < MIN_POS || next[i] > MAX_POS) return null;
+      }
+      return next;
+    }
+
+    // 反向移动：假设原正向是从 prev 经 (plate, direction) 到达 values，求 prev
+    // 用于双向 BFS 的反向扩展
+    function reverseMove(values, plate, direction, effects) {
+      const delta = (direction === 'right') ? 1 : -1;
+      const prev = new Array(values.length);
+      for (let i = 0; i < prev.length; i++) prev[i] = values[i];
+
+      prev[plate] -= delta;
+
+      const fx = effects[plate] || {};
+      for (const targetStr of Object.keys(fx)) {
+        const target = Number(targetStr);
+        const relation = fx[targetStr];
+        const amount = (relation === 'same') ? delta : -delta;
+        prev[target] -= amount;
+      }
+
+      for (let i = 0; i < prev.length; i++) {
+        if (prev[i] < MIN_POS || prev[i] > MAX_POS) return null;
+      }
+      return prev;
+    }
+
+    function keyOf(values) { return values.join(','); }
+    function moveKeyOf(plate, direction) { return plate + ':' + direction; }
+
+    // 直接比较 cost 对象 {moves, groups}，groups 优先
+    function compareCostObjs(a, b) {
+      if (a.groups !== b.groups) return a.groups - b.groups;
+      if (a.moves !== b.moves) return a.moves - b.moves;
+      return 0;
+    }
+
+    // 旧的 nodes 引用比较（保留兼容）
+    function compareCost(a, b) { return compareCostObjs(a, b); }
+    function hasSameCost(a, b) { return !!a && !!b && a.moves === b.moves && a.groups === b.groups; }
+
+    // ---------- 二叉最小堆（O(log n) push/pop） ----------
+    // 堆元素：{ idx, moves, groups }
+    function heapPush(heap, item) {
+      heap.push(item);
+      let i = heap.length - 1;
+      while (i > 0) {
+        const parent = (i - 1) >> 1;
+        if (compareCostObjs(heap[i], heap[parent]) >= 0) break;
+        const tmp = heap[i]; heap[i] = heap[parent]; heap[parent] = tmp;
+        i = parent;
+      }
+    }
+
+    function heapPop(heap) {
+      if (heap.length === 0) return undefined;
+      const top = heap[0];
+      const last = heap.pop();
+      if (heap.length > 0) {
+        heap[0] = last;
+        let i = 0;
+        const n = heap.length;
+        while (true) {
+          const left = i * 2 + 1;
+          const right = i * 2 + 2;
+          let smallest = i;
+          if (left < n && compareCostObjs(heap[left], heap[smallest]) < 0) smallest = left;
+          if (right < n && compareCostObjs(heap[right], heap[smallest]) < 0) smallest = right;
+          if (smallest === i) break;
+          const tmp = heap[i]; heap[i] = heap[smallest]; heap[smallest] = tmp;
+          i = smallest;
+        }
+      }
+      return top;
+    }
+
+    function buildSolution(goalIndex, nodes) {
+      const moves = [];
+      const states = [];
+      let idx = goalIndex;
+      while (idx !== -1) {
+        const node = nodes[idx];
+        states.push(node.values);
+        if (node.move) moves.push(node.move);
+        idx = node.prev;
+      }
+      moves.reverse();
+      states.reverse();
+      return { moves, states };
+    }
+
+    // 拼接双向 BFS 的两条路径
+    // fwdGoalIdx: 正向路径终点（M 在 fwdNodes 里的索引）
+    // bwdGoalIdx: 反向路径终点（M 在 bwdNodes 里的索引）
+    function buildBidirectionalSolution(fwdGoalIdx, bwdGoalIdx, fwdNodes, bwdNodes, startState, effects) {
+      // 1. 正向路径：start → M（push 倒序，需 reverse）
+      const fwdMoves = [];
+      let idx = fwdGoalIdx;
+      while (idx !== -1) {
+        const node = fwdNodes[idx];
+        if (node.move) fwdMoves.push({ plate: node.move.plate, direction: node.move.direction });
+        idx = node.prev;
+      }
+      fwdMoves.reverse();
+
+      // 2. 反向路径：M → target
+      // bwdNodes[k].move = (plate, direction) 描述"从 bwdNodes[k-1] 到 bwdNodes[k] 的正向 move"
+      // 所以从 bwdNodes[k] 反向走到 bwdNodes[k-1] 也用同样的 (plate, direction)（保持不变）
+      // push 顺序（bwdGoalIdx → 1）就是 M → target 的正序，不需要 reverse
+      const bwdMoves = [];
+      idx = bwdGoalIdx;
+      while (idx !== -1) {
+        const node = bwdNodes[idx];
+        if (node.move) {
+          bwdMoves.push({
+            plate: node.move.plate,
+            direction: node.move.direction  // 保持不变
+          });
+        }
+        idx = node.prev;
+      }
+
+      const moves = fwdMoves.concat(bwdMoves);
+
+      // 重新生成 states（用于兼容）
+      const states = [startState.slice()];
+      let s = startState.slice();
+      for (const m of moves) {
+        const next = applyMove(s, m.plate, m.direction, effects);
+        if (!next) break;
+        states.push(next);
+        s = next;
+      }
+
+      return { moves, states };
+    }
+
+    // 双向 BFS：从 start 和 target 同时扩展，收集多个相遇点候选后选最优
+    function solve(startState, effects, n) {
+      const start = startState.slice();
+      const target = new Array(n).fill(TARGET);
+
+      if (isGoal(start)) {
+        return { solved: true, solution: { moves: [], states: [start] }, timedOut: false };
+      }
+
+      const MAX_CANDIDATES = 8;
+
+      // ---- 正向：从 start 出发 ----
+      const fwdNodes = [{
+        values: start, prev: -1, move: null,
+        moves: 0, groups: 0, lastMoveKey: ''
+      }];
+      const fwdVisited = new Map();
+      fwdVisited.set(keyOf(start) + '|', { nodeIdx: 0, moves: 0, groups: 0 });
+      const fwdHeap = [];
+      heapPush(fwdHeap, { idx: 0, moves: 0, groups: 0 });
+
+      // ---- 反向：从 target 出发 ----
+      const bwdNodes = [{
+        values: target.slice(), prev: -1, move: null,
+        moves: 0, groups: 0, lastMoveKey: ''
+      }];
+      const bwdVisited = new Map();
+      bwdVisited.set(keyOf(target) + '|', { nodeIdx: 0, moves: 0, groups: 0 });
+      const bwdHeap = [];
+      heapPush(bwdHeap, { idx: 0, moves: 0, groups: 0 });
+
+      // 候选相遇点（cost 直接相加做 lex 比较）
+      const candidates = [];
+
+      const startTime = Date.now();
+
+      const finishWithBest = () => {
+        if (candidates.length === 0) return null;
+        // 排序选最优
+        let bestIdx = 0;
+        for (let i = 1; i < candidates.length; i++) {
+          if (compareCostObjs(candidates[i].cost, candidates[bestIdx].cost) < 0) bestIdx = i;
+        }
+        const best = candidates[bestIdx];
+        return buildBidirectionalSolution(best.fwdIdx, best.bwdIdx, fwdNodes, bwdNodes, start, effects);
+      };
+
+      while (fwdHeap.length > 0 || bwdHeap.length > 0) {
+        if (Date.now() - startTime > TIMEOUT_MS) {
+          return { solved: false, timedOut: true };
+        }
+
+        // 候选足够 → 终止选最优
+        if (candidates.length >= MAX_CANDIDATES) {
+          const solution = finishWithBest();
+          if (solution) return { solved: true, solution, timedOut: false };
+        }
+
+        // 每次扩展队列较小的那一侧
+        const expandForward = fwdHeap.length <= bwdHeap.length;
+
+        if (expandForward) {
+          if (fwdHeap.length === 0) continue;
+          const top = heapPop(fwdHeap);
+          const fwdIdx = top.idx;
+          const fwdNode = fwdNodes[fwdIdx];
+          const fwdKey = keyOf(fwdNode.values) + '|' + fwdNode.lastMoveKey;
+
+          const fwdBest = fwdVisited.get(fwdKey);
+          if (!fwdBest || fwdBest.moves !== top.moves || fwdBest.groups !== top.groups) continue;
+
+          // 相遇：记录候选（不立即终止）
+          const bwdMatch = bwdVisited.get(fwdKey);
+          if (bwdMatch) {
+            candidates.push({
+              fwdIdx,
+              bwdIdx: bwdMatch.nodeIdx,
+              cost: {
+                moves: fwdNode.moves + bwdMatch.moves,
+                groups: fwdNode.groups + bwdMatch.groups
+              }
+            });
+            if (candidates.length >= MAX_CANDIDATES) {
+              const solution = finishWithBest();
+              if (solution) return { solved: true, solution, timedOut: false };
+            }
+          }
+
+          // 正向扩展
+          for (let plate = 0; plate < n; plate++) {
+            for (const direction of ['right', 'left']) {
+              const nextValues = applyMove(fwdNode.values, plate, direction, effects);
+              if (!nextValues) continue;
+              const nextMoveKey = moveKeyOf(plate, direction);
+              const nextCost = {
+                moves: fwdNode.moves + 1,
+                groups: fwdNode.groups + (fwdNode.lastMoveKey === nextMoveKey ? 0 : 1)
+              };
+              const nextKey = keyOf(nextValues) + '|' + nextMoveKey;
+              const prevBest = fwdVisited.get(nextKey);
+              if (prevBest && compareCostObjs(nextCost, prevBest) >= 0) continue;
+              fwdVisited.set(nextKey, { nodeIdx: fwdNodes.length, moves: nextCost.moves, groups: nextCost.groups });
+              const nextIdx = fwdNodes.length;
+              fwdNodes.push({
+                values: nextValues, prev: fwdIdx, move: { plate, direction },
+                moves: nextCost.moves, groups: nextCost.groups, lastMoveKey: nextMoveKey
+              });
+              heapPush(fwdHeap, { idx: nextIdx, moves: nextCost.moves, groups: nextCost.groups });
+            }
+          }
+        } else {
+          if (bwdHeap.length === 0) continue;
+          const top = heapPop(bwdHeap);
+          const bwdIdx = top.idx;
+          const bwdNode = bwdNodes[bwdIdx];
+          const bwdKey = keyOf(bwdNode.values) + '|' + bwdNode.lastMoveKey;
+
+          const bwdBest = bwdVisited.get(bwdKey);
+          if (!bwdBest || bwdBest.moves !== top.moves || bwdBest.groups !== top.groups) continue;
+
+          const fwdMatch = fwdVisited.get(bwdKey);
+          if (fwdMatch) {
+            candidates.push({
+              fwdIdx: fwdMatch.nodeIdx,
+              bwdIdx,
+              cost: {
+                moves: fwdMatch.moves + bwdNode.moves,
+                groups: fwdMatch.groups + bwdNode.groups
+              }
+            });
+            if (candidates.length >= MAX_CANDIDATES) {
+              const solution = finishWithBest();
+              if (solution) return { solved: true, solution, timedOut: false };
+            }
+          }
+
+          // 反向扩展
+          for (let plate = 0; plate < n; plate++) {
+            for (const direction of ['right', 'left']) {
+              const nextValues = reverseMove(bwdNode.values, plate, direction, effects);
+              if (!nextValues) continue;
+              const nextMoveKey = moveKeyOf(plate, direction);
+              const nextCost = {
+                moves: bwdNode.moves + 1,
+                groups: bwdNode.groups + (bwdNode.lastMoveKey === nextMoveKey ? 0 : 1)
+              };
+              const nextKey = keyOf(nextValues) + '|' + nextMoveKey;
+              const prevBest = bwdVisited.get(nextKey);
+              if (prevBest && compareCostObjs(nextCost, prevBest) >= 0) continue;
+              bwdVisited.set(nextKey, { nodeIdx: bwdNodes.length, moves: nextCost.moves, groups: nextCost.groups });
+              const nextIdx = bwdNodes.length;
+              bwdNodes.push({
+                values: nextValues, prev: bwdIdx, move: { plate, direction },
+                moves: nextCost.moves, groups: nextCost.groups, lastMoveKey: nextMoveKey
+              });
+              heapPush(bwdHeap, { idx: nextIdx, moves: nextCost.moves, groups: nextCost.groups });
+            }
+          }
+        }
+      }
+
+      // 队列耗尽：用已有候选
+      const solution = finishWithBest();
+      if (solution) return { solved: true, solution, timedOut: false };
+
+      return { solved: false, timedOut: false };
+    }
+
+    self.onmessage = function(e) {
+      const { startState, effects, n } = e.data;
+      const result = solve(startState, effects, n);
+      self.postMessage(result);
+    };
+  `;
+
+  function createSolverWorker() {
+    const blob = new Blob([WORKER_SOURCE], { type: 'application/javascript' });
+    return new Worker(URL.createObjectURL(blob));
+  }
+
+  /* ---------- 求解结果展示（右侧 SOLUTION） ---------- */
+  function renderSolution(solution) {
+    const display = document.getElementById('solDisplay');
+    const isEmpty = !solution || solution.moves.length === 0;
+    display.classList.toggle('empty', isEmpty);
+    if (isEmpty) {
+      display.textContent = solution ? 'Already unlocked. No moves needed.' : 'Set a start pin on card 1';
+      return;
+    }
+
+    const moves = solution.moves;
+    // 按 plate + direction 聚合（连续合并），最后按 plate 升序排序
+    const groups = [];
+    for (const m of moves) {
+      const last = groups[groups.length - 1];
+      const dir = m.direction === 'right' ? 'A' : 'D';
+      if (last && last.plate === m.plate && last.dir === dir) {
+        last.count++;
+      } else {
+        groups.push({ plate: m.plate, dir, count: 1 });
+      }
+    }
+    // 按 plate 升序排序（按 plate，再按 dir 让 A 在前 D 在后）
+    groups.sort((a, b) => a.plate - b.plate || (a.dir < b.dir ? -1 : 1));
+    display.innerHTML = groups.map((g) => {
+      const dirText = g.dir === 'A' ? 'Left (A)' : 'Right (D)';
+      return `<div class="move-step">Plate ${g.plate + 1} — ${dirText} ×${g.count}</div>`;
+    }).join('');
+  }
+
+  /* ---------- 点击 Solve ---------- */
+  document.getElementById('solveBtn').addEventListener('click', () => {
+    const startState = readStartState();
+    const effects = readEffects();
+    const status = document.getElementById('solveStatus');
+    const btn = document.getElementById('solveBtn');
+    const list = document.getElementById('stepsList');
+
+    list.innerHTML = '';
+    status.textContent = 'Solving…';
+    btn.disabled = true;
+
+    const worker = createSolverWorker();
+
+    const mainTimeout = setTimeout(() => {
+      worker.terminate();
+      status.textContent = 'Solve timeout (worker terminated)';
+      lastSolution = null;
+      renderSolution(null);
+      btn.disabled = false;
+    }, 35000);
+
+    worker.onmessage = (e) => {
+      clearTimeout(mainTimeout);
+      worker.terminate();
+      btn.disabled = false;
+      const { solved, solution, timedOut } = e.data;
+
+      if (timedOut) {
+        status.textContent = 'Solve timeout (30s)';
+        lastSolution = null;
+        renderSolution(null);
+        return;
+      }
+
+      if (!solved) {
+        status.textContent = 'No solution for this lock';
+        lastSolution = null;
+        renderSolution(null);
+        return;
+      }
+
+      lastSolution = solution;
+      renderSolution(solution);
+
+      const moves = solution.moves;
+      status.textContent = `Solved in ${moves.length} moves`;
+
+      if (moves.length === 0) {
+        return;
+      }
+
+      // 主区步骤列表（隐藏，因为 SOLUTION 已显示在右侧）
+      moves.forEach((m, idx) => {
+        const li = document.createElement('li');
+        const dirText = (m.direction === 'right') ? 'Right (D)' : 'Left (A)';
+        li.textContent = `Step ${idx + 1}: Plate ${m.plate + 1} ${dirText}`;
+        list.appendChild(li);
+      });
+    };
+
+    worker.onerror = (err) => {
+      clearTimeout(mainTimeout);
+      worker.terminate();
+      btn.disabled = false;
+      status.textContent = 'Worker error';
+      lastSolution = null;
+      renderSolution(null);
+    };
+
+    worker.postMessage({ startState, effects, n: N });
+  });
+
+  /* ---------- Plates 数量切换（分段按钮组，点击立即切换） ---------- */
+  function setPlateCount(v) {
+    if (v === N) return;
+    N = v;
+    const newStart = new Array(N).fill(TARGET);
+    for (let i = 0; i < Math.min(N, state.start.length); i++) {
+      newStart[i] = state.start[i];
+    }
+    state.start = newStart;
+    state.effects = {};
+    for (let i = 0; i < N; i++) state.effects[i] = {};
+
+    document.querySelectorAll('#plateCountSeg .seg-btn').forEach((btn) => {
+      const isActive = parseInt(btn.dataset.value, 10) === N;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
+
+    buildPlateRows();
+    document.getElementById('stepsList').innerHTML = '';
+    document.getElementById('solveStatus').textContent = '';
+    lastSolution = null;
+    renderSolution(null);
+  }
+
+  document.querySelectorAll('#plateCountSeg .seg-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setPlateCount(parseInt(btn.dataset.value, 10));
+    });
+  });
+
+  /* ---------- RESET ---------- */
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    state.start = new Array(N).fill(TARGET);
+    state.effects = {};
+    for (let i = 0; i < N; i++) state.effects[i] = {};
+    buildPlateRows();
+    document.getElementById('stepsList').innerHTML = '';
+    document.getElementById('solveStatus').textContent = '';
+    lastSolution = null;
+    renderSolution(null);
+  });
+
+  /* ---------- HOW IT WORKS Modal ---------- */
+  const howModal = document.getElementById('howModal');
+  document.getElementById('howBtn').addEventListener('click', () => {
+    howModal.style.display = 'flex';
+  });
+  document.getElementById('howModalClose').addEventListener('click', () => {
+    howModal.style.display = 'none';
+  });
+  howModal.addEventListener('click', (e) => {
+    if (e.target === howModal) howModal.style.display = 'none';
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') howModal.style.display = 'none';
+  });
+
+  /* ---------- CHESTS（localStorage） ---------- */
+  function loadChests() {
+    try {
+      const raw = localStorage.getItem(CHESTS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+  function saveChests(list) {
+    try { localStorage.setItem(CHESTS_KEY, JSON.stringify(list)); } catch {}
+  }
+  function renderChests() {
+    const list = loadChests();
+    const ul = document.getElementById('chestsList');
+    const empty = document.getElementById('chestsEmpty');
+    ul.innerHTML = '';
+    if (list.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    list.forEach((c, idx) => {
+      const li = document.createElement('li');
+      const name = document.createElement('span');
+      name.className = 'chest-name';
+      name.title = `Load ${c.name}`;
+
+      // 名字 + 步数
+      const label = document.createElement('span');
+      label.textContent = c.name;
+      name.appendChild(label);
+      if (c.solution && c.solution.moves && c.solution.moves.length > 0) {
+        const stepSpan = document.createElement('span');
+        stepSpan.className = 'chest-step';
+        stepSpan.textContent = `${c.solution.moves.length} steps`;
+        name.appendChild(stepSpan);
+      }
+
+      name.addEventListener('click', () => {
+        N = c.n;
+        state.start = c.start.slice();
+        state.effects = JSON.parse(JSON.stringify(c.effects));
+        document.querySelectorAll('#plateCountSeg .seg-btn').forEach((btn) => {
+          const isActive = parseInt(btn.dataset.value, 10) === N;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+        buildPlateRows();
+        // 恢复 solution（包含答案），并显示在右侧 SOLUTION 区
+        lastSolution = c.solution || null;
+        renderSolution(lastSolution);
+        if (lastSolution && lastSolution.moves && lastSolution.moves.length > 0) {
+          document.getElementById('solveStatus').textContent =
+            `Loaded chest: ${c.name} (${lastSolution.moves.length} steps)`;
+        } else {
+          document.getElementById('solveStatus').textContent = `Loaded chest: ${c.name}`;
+        }
+      });
+      li.appendChild(name);
+
+      const del = document.createElement('button');
+      del.textContent = '×';
+      del.title = `删除 ${c.name}`;
+      del.addEventListener('click', () => {
+        const all = loadChests();
+        all.splice(idx, 1);
+        saveChests(all);
+        renderChests();
+      });
+      li.appendChild(del);
+      ul.appendChild(li);
+    });
+  }
+
+  document.getElementById('saveChestBtn').addEventListener('click', () => {
+    const input = document.getElementById('chestName');
+    const errEl = document.getElementById('chestError');
+    const name = (input.value || '').trim();
+    if (!name) {
+      errEl.textContent = 'Enter a chest name to save solution';
+      errEl.style.display = 'block';
+      return;
+    }
+    // 必须先求解（拿到答案）才能保存
+    if (!lastSolution || !lastSolution.moves || lastSolution.moves.length === 0) {
+      errEl.textContent = 'Set plate positions and links, then click SOLVE LOCK before saving';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+    const list = loadChests();
+    const existing = list.findIndex((c) => c.name === name);
+    const chest = {
+      name,
+      n: N,
+      start: state.start.slice(),
+      effects: JSON.parse(JSON.stringify(state.effects)),
+      solution: lastSolution
+    };
+    if (existing >= 0) {
+      if (!confirm(`覆盖已有的锁 "${name}"？`)) return;
+      list[existing] = chest;
+    } else {
+      list.push(chest);
+    }
+    saveChests(list);
+    renderChests();
+    input.value = '';
+  });
+
+  /* ---------- 启动 ---------- */
+  buildPlateRows();
+  renderChests();
+  renderSolution(null);
+  </script>
+</body>
+</html>
