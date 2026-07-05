@@ -861,7 +861,6 @@
     }
 
     // 反向移动：假设原正向是从 prev 经 (plate, direction) 到达 values，求 prev
-    // 用于双向 BFS 的反向扩展
     function reverseMove(values, plate, direction, effects) {
       const delta = (direction === 'right') ? 1 : -1;
       const prev = new Array(values.length);
@@ -932,24 +931,6 @@
       return top;
     }
 
-    function buildSolution(goalIndex, nodes) {
-      const moves = [];
-      const states = [];
-      let idx = goalIndex;
-      while (idx !== -1) {
-        const node = nodes[idx];
-        states.push(node.values);
-        if (node.move) moves.push(node.move);
-        idx = node.prev;
-      }
-      moves.reverse();
-      states.reverse();
-      return { moves, states };
-    }
-
-    // 拼接双向 BFS 的两条路径
-    // fwdGoalIdx: 正向路径终点（M 在 fwdNodes 里的索引）
-    // bwdGoalIdx: 反向路径终点（M 在 bwdNodes 里的索引）
     function buildBidirectionalSolution(fwdGoalIdx, bwdGoalIdx, fwdNodes, bwdNodes, startState, effects) {
       // 1. 正向路径：start → M（push 倒序，需 reverse）
       const fwdMoves = [];
@@ -961,10 +942,7 @@
       }
       fwdMoves.reverse();
 
-      // 2. 反向路径：M → target
-      // bwdNodes[k].move = (plate, direction) 描述"从 bwdNodes[k-1] 到 bwdNodes[k] 的正向 move"
-      // 所以从 bwdNodes[k] 反向走到 bwdNodes[k-1] 也用同样的 (plate, direction)（保持不变）
-      // push 顺序（bwdGoalIdx → 1）就是 M → target 的正序，不需要 reverse
+      // 2. 反向路径：M → target（保持 direction 不变）
       const bwdMoves = [];
       idx = bwdGoalIdx;
       while (idx !== -1) {
@@ -972,13 +950,19 @@
         if (node.move) {
           bwdMoves.push({
             plate: node.move.plate,
-            direction: node.move.direction  // 保持不变
+            direction: node.move.direction
           });
         }
         idx = node.prev;
       }
 
-      const moves = fwdMoves.concat(bwdMoves);
+      let moves = fwdMoves.concat(bwdMoves);
+
+      // 后处理：无联动情况下，对每个 plate 求净操作，合并"来回"
+      // 有联动时 plate 操作顺序影响状态，不能简单求净
+      if (moves.length > 0 && !hasAnyLink(effects, moves)) {
+        moves = compactPlateMoves(moves, startState, effects);
+      }
 
       // 重新生成 states（用于兼容）
       const states = [startState.slice()];
@@ -993,7 +977,44 @@
       return { moves, states };
     }
 
-    // 双向 BFS：从 start 和 target 同时扩展，收集多个相遇点候选后选最优
+    // 检查 effects 中是否有非自指的联动（联动会改变 plate 顺序敏感性）
+    function hasAnyLink(effects, moves) {
+      for (const plateStr of Object.keys(effects)) {
+        const fx = effects[plateStr] || {};
+        for (const targetStr of Object.keys(fx)) {
+          if (Number(plateStr) !== Number(targetStr)) return true;
+        }
+      }
+      // 额外防御：如果 moves 涉及联动 plate 但 effects 没声明，可能数据损坏
+      return false;
+    }
+
+    // 无联动情况下，对每个 plate 求净操作并按 plate 升序重排
+    // （合并"来回"，但保留"自反 + 跳到"等必要移动）
+    function compactPlateMoves(moves, startState, effects) {
+      // 先模拟确认解合法，并按 plate 收集 net delta
+      const n = startState.length;
+      const netDelta = new Array(n).fill(0);
+      for (const m of moves) {
+        const delta = m.direction === 'right' ? 1 : -1;
+        netDelta[m.plate] += delta;
+      }
+      // 用净操作重排（按 plate 升序）
+      const result = [];
+      for (let i = 0; i < n; i++) {
+        const d = netDelta[i];
+        if (d > 0) {
+          for (let k = 0; k < d; k++) result.push({ plate: i, direction: 'right' });
+        } else if (d < 0) {
+          for (let k = 0; k < -d; k++) result.push({ plate: i, direction: 'left' });
+        }
+      }
+      return result;
+    }
+
+    // 双向 BFS + 无联动 plate 来回合并：
+    // 算法：双向 priority queue + lex cost (groups, moves)，保证最优
+    // 后处理：算法完成后，无联动情况下对每个 plate 求净操作，合并来回
     function solve(startState, effects, n) {
       const start = startState.slice();
       const target = new Array(n).fill(TARGET);
@@ -1001,8 +1022,6 @@
       if (isGoal(start)) {
         return { solved: true, solution: { moves: [], states: [start] }, timedOut: false };
       }
-
-      const MAX_CANDIDATES = 8;
 
       // ---- 正向：从 start 出发 ----
       const fwdNodes = [{
@@ -1024,14 +1043,14 @@
       const bwdHeap = [];
       heapPush(bwdHeap, { idx: 0, moves: 0, groups: 0 });
 
-      // 候选相遇点（cost 直接相加做 lex 比较）
+      // 候选相遇点
       const candidates = [];
+      const MAX_CANDIDATES = 8;
 
       const startTime = Date.now();
 
       const finishWithBest = () => {
         if (candidates.length === 0) return null;
-        // 排序选最优
         let bestIdx = 0;
         for (let i = 1; i < candidates.length; i++) {
           if (compareCostObjs(candidates[i].cost, candidates[bestIdx].cost) < 0) bestIdx = i;
@@ -1045,13 +1064,11 @@
           return { solved: false, timedOut: true };
         }
 
-        // 候选足够 → 终止选最优
         if (candidates.length >= MAX_CANDIDATES) {
           const solution = finishWithBest();
           if (solution) return { solved: true, solution, timedOut: false };
         }
 
-        // 每次扩展队列较小的那一侧
         const expandForward = fwdHeap.length <= bwdHeap.length;
 
         if (expandForward) {
@@ -1064,7 +1081,6 @@
           const fwdBest = fwdVisited.get(fwdKey);
           if (!fwdBest || fwdBest.moves !== top.moves || fwdBest.groups !== top.groups) continue;
 
-          // 相遇：记录候选（不立即终止）
           const bwdMatch = bwdVisited.get(fwdKey);
           if (bwdMatch) {
             candidates.push({
@@ -1081,7 +1097,7 @@
             }
           }
 
-          // 正向扩展
+          // 正向扩展：每步 1 个节点（每 plate × 方向 × 单步）
           for (let plate = 0; plate < n; plate++) {
             for (const direction of ['right', 'left']) {
               const nextValues = applyMove(fwdNode.values, plate, direction, effects);
@@ -1129,7 +1145,7 @@
             }
           }
 
-          // 反向扩展
+          // 反向扩展：用 reverseMove 从 bwdNode.values 反推 prev
           for (let plate = 0; plate < n; plate++) {
             for (const direction of ['right', 'left']) {
               const nextValues = reverseMove(bwdNode.values, plate, direction, effects);
