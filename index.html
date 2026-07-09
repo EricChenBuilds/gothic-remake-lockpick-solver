@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="description" content="The ultimate gothic 1 remake lockpicking tool and gothic remake lockpicking solver. This advanced gothic lockpick solver works as a real-time gothic 1 remake lock solver and interactive gothic remake lock solver. If you need a reliable gothic lock solver or a smart gothic 1 remake lockpicking solver, our gothic remake lockpicking tool helps you decrypt linkages instantly. Safely optimize every chest puzzle with the best gothic remake lockpick solver and gothic 1 remake lockpick solver today!">
+  <meta name="description" content="Free gothic remake lockpicking solver. Set plate positions and linkages for a 4–7 plate lock, then get the shortest move sequence in your browser. No install, no upload.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <title>Gothic 1 Remake Lockpicking Solver | Gothic Lockpick & Lock Solver Tool</title>
+  <title>Gothic Remake Lockpicking Solver – Free Online Tool</title>
   <style>
     /* ========================================================
      * 深色游戏风格
@@ -573,6 +573,168 @@
       color: #888;
       margin-right: 8px;
     }
+
+    /* ========================================================
+     * SEO 介绍区（工具主区域下方）
+     * 复用暗色游戏风格：金色 #e8d090、强调金 #d4a040、卡片 rgba 半透明
+     * ======================================================== */
+    .seo-section {
+      padding: 36px 0 12px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .seo-section h2 {
+      font-size: 18px;
+      color: #e8d090;
+      letter-spacing: 3px;
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+    .seo-section h3 {
+      font-size: 13px;
+      color: #aaa;
+      letter-spacing: 3px;
+      font-weight: 600;
+      margin: 0 0 12px;
+    }
+    .seo-lead {
+      color: #d0d0e0;
+      font-size: 14px;
+      line-height: 1.7;
+      max-width: 820px;
+      margin: 0 0 16px;
+    }
+    .seo-lead b { color: #e8d090; }
+
+    /* ---------- 3 列特性卡片 ---------- */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+    @media (max-width: 800px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+    .feature-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 18px 16px;
+    }
+    .feature-card h3 {
+      color: #e8d090;
+      font-size: 14px;
+      letter-spacing: 1px;
+      margin: 0 0 8px;
+    }
+    .feature-card p {
+      color: #b0b0c0;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ---------- How to use 有序列表 ---------- */
+    .howto-list {
+      list-style: none;
+      counter-reset: howto;
+      padding: 0;
+      margin: 0;
+      max-width: 820px;
+    }
+    .howto-list li {
+      counter-increment: howto;
+      position: relative;
+      padding: 10px 12px 10px 48px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      color: #d0d0e0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .howto-list li::before {
+      content: counter(howto);
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      background: transparent;
+      border: 1px solid #d4a040;
+      color: #d4a040;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .howto-list li b { color: #e8d090; }
+
+    /* ---------- FAQ（原生 <details>，自定义箭头） ---------- */
+    .faq-list {
+      max-width: 820px;
+      margin: 0;
+      padding: 0;
+    }
+    .faq-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .faq-item summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      color: #e8d090;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      list-style: none;
+      position: relative;
+      transition: background 0.12s;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::marker { display: none; }
+    .faq-item summary:hover { background: rgba(255, 255, 255, 0.02); }
+    .faq-item summary::after {
+      content: "▸";
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #d4a040;
+      font-size: 12px;
+      transition: transform 0.18s;
+    }
+    .faq-item[open] summary {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .faq-item[open] summary::after {
+      transform: translateY(-50%) rotate(90deg);
+    }
+    .faq-item p {
+      margin: 0;
+      padding: 12px 16px 14px;
+      color: #b0b0c0;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .faq-item p b { color: #e8d090; }
+
+    /* ---------- 免责声明 ---------- */
+    .seo-disclaimer {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.6;
+      padding: 24px 0 8px;
+      margin-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
   </style>
 </head>
 <body>
@@ -660,6 +822,77 @@
         </section>
       </aside>
     </div>
+
+    <!-- ========================================================
+     * SEO 介绍区（工具主区域下方）
+     * 关键词：gothic remake lockpicking solver
+     * ======================================================== -->
+    <section class="seo-section" aria-labelledby="seoIntro">
+      <h2 id="seoIntro">Gothic Remake Lockpicking Solver – Free Browser Tool</h2>
+      <p class="seo-lead">
+        Stuck on a <b>Gothic 1 Remake</b> chest? This <b>gothic remake lockpicking solver</b> reads your current plate positions and the same / opposite links between them, then returns the shortest legal click sequence so you don't burn another lockpick guessing left or right.
+      </p>
+      <p class="seo-lead">
+        Set up a 4–7 plate lock the way you see it on screen, mark how each plate drags its neighbours, and press <b>SOLVE LOCK</b>. Consecutive identical moves are grouped, so the result is easy to follow in-game.
+      </p>
+    </section>
+
+    <section class="seo-section" aria-labelledby="seoFeatures">
+      <h2 id="seoFeatures">Why Use This Gothic Remake Lockpick Solver</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Shortest Move Sequence</h3>
+          <p>Plans the fewest legal plate presses for your current lock state, with consecutive identical moves grouped into a single step you can read at a glance.</p>
+        </div>
+        <div class="feature-card">
+          <h3>4–7 Plates Supported</h3>
+          <p>Works for any lock in the game, from the easiest 4-plate chests up to the toughest 7-plate ones. Pick the plate count and the solver adjusts automatically.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Runs in Your Browser</h3>
+          <p>Static HTML, CSS, and JavaScript. Nothing is installed, no account is needed, and your lock setup never leaves the page.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="seo-section" aria-labelledby="seoHowto">
+      <h2 id="seoHowto">How to Solve a Gothic 1 Remake Lock</h2>
+      <ol class="howto-list">
+        <li>Pick the <b>PLATES</b> count (4 / 5 / 6 / 7) that matches the chest in front of you.</li>
+        <li>On <b>Plate 1</b>, click the hole where the start pin currently sits. The target pin defaults to <b>Hole 4</b>.</li>
+        <li>For each plate, set the <b>Link Grid</b> cells to <b>None</b>, <b>Same</b>, or <b>Opposite</b> based on what the linked plate does in-game. Press <b>SOLVE LOCK</b> and read the result in the right-hand panel.</li>
+      </ol>
+    </section>
+
+    <section class="seo-section" aria-labelledby="seoFaq">
+      <h2 id="seoFaq">Gothic Remake Lockpicking Solver – FAQ</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Is this gothic remake lockpicking solver free to use?</summary>
+          <p>Yes. The tool is free, runs entirely in your browser, and has no ads, accounts, or hidden limits.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Which plate counts are supported?</summary>
+          <p>All standard Gothic 1 Remake locks: <b>4, 5, 6, and 7 plates</b>. Pick the count that matches the chest and the rows update automatically.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need to install anything or create an account?</summary>
+          <p>No install and no sign-up. Open the page, set up the lock, and solve. Your data stays on your device — nothing is sent to a server.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I save a lock setup and reload it later?</summary>
+          <p>Yes. Use the <b>Save chest</b> button in the right-hand <b>CHESTS</b> panel to store the current setup under a name, then reload it from the same panel next time.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if the solution doesn't match the lock in-game?</summary>
+          <p>Re-check the <b>Link Grid</b> first — a single Same/Opposite mistake cascades through the whole sequence. Then verify the <b>start pin</b> on Plate 1 matches what's on screen. The solver works from your exact configuration.</p>
+        </details>
+      </div>
+    </section>
+
+    <p class="seo-disclaimer">
+      Fan-made tool. Not affiliated with, endorsed by, or sponsored by the publishers or developers of Gothic 1 Remake. "Gothic" and "Gothic Remake" are trademarks of their respective owners. All game-related content belongs to its respective owners.
+    </p>
   </div>
 
   <script>
