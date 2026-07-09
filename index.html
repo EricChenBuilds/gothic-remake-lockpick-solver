@@ -129,8 +129,21 @@
       margin-bottom: 20px;
     }
     .title-text {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       flex: 0 0 auto;
       width: max-content;
+      max-width: 100%;
+    }
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .title-row h1 {
+      margin: 0;
     }
     .how-btn {
       padding: 10px 18px;
@@ -141,11 +154,10 @@
       font-size: 12px;
       letter-spacing: 2px;
       cursor: pointer;
-      margin-top: 4px;
-      margin-left: auto;
       white-space: nowrap;
       font-weight: 600;
       min-height: 36px;
+      flex-shrink: 0;
       transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.08s;
     }
     .how-btn:hover {
@@ -745,10 +757,12 @@
   <div class="container">
     <div class="title-bar">
       <div class="title-text">
-        <h1>Gothic Remake Lockpick Solver</h1>
+        <div class="title-row">
+          <h1>Gothic Remake Lockpick Solver</h1>
+          <button class="how-btn" id="howBtn" type="button">HOW IT WORKS</button>
+        </div>
         <p class="subtitle">Set up a lock, then press <b>Solve</b> for the shortest click sequence.</p>
       </div>
-      <button class="how-btn" id="howBtn" type="button">HOW IT WORKS</button>
     </div>
 
     <!-- HOW IT WORKS 弹窗 -->
