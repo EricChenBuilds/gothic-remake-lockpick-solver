@@ -2,11 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="description" content="Free gothic remake lockpicking solver. Set plate positions and linkages for a 4–7 plate lock, then get the shortest move sequence in your browser. No install, no upload.">
+  <!-- viewport：移动端适配，Google 移动优先索引必需 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Free gothic remake lockpicking solver. Set plate start pins and link directions, get the shortest legal move sequence for any 4–7 plate chest. Runs in browser.">
   <!-- canonical URL：声明主版本地址，避免 Vercel 自动重定向（如 www / trailing slash）产生孤立链接 -->
   <link rel="canonical" href="https://gothicremakelockpickingsolver.com/">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>Gothic Remake Lockpicking Solver – Free Online Tool</title>
+
+  <!-- Open Graph：社交分享卡片（Discord / Twitter / 微信等自动读取，无需写分享功能） -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Gothic Remake Lockpicking Solver – Free Online Tool">
+  <meta property="og:description" content="Free gothic remake lockpicking solver. Set plate start pins and link directions, get the shortest legal move sequence for any 4–7 plate chest. Runs in browser.">
+  <meta property="og:url" content="https://gothicremakelockpickingsolver.com/">
+  <meta property="og:image" content="https://gothicremakelockpickingsolver.com/image.jpg">
+  <!-- Twitter/X 卡片：复用 OG 内容 -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gothic Remake Lockpicking Solver – Free Online Tool">
+  <meta name="twitter:description" content="Free gothic remake lockpicking solver. Set plate start pins and link directions, get the shortest legal move sequence for any 4–7 plate chest. Runs in browser.">
+  <meta name="twitter:image" content="https://gothicremakelockpickingsolver.com/image.jpg">
 
   <!-- Google Analytics 4：页面浏览统计 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FJ21Y2B8N"></script>
@@ -789,7 +803,8 @@
         <p>
           Each plate has <b>7 holes</b>. <b>Hole 1 to Hole 7</b> are arranged from left to right.
         </p>
-        <img class="how-img" src="image.jpg" alt="Lockpicking puzzle reference">
+        <!-- 声明 width/height 防止 CLS 布局抖动（实测 1634×1378） -->
+        <img class="how-img" src="image.jpg" alt="Lockpicking puzzle reference" width="1634" height="1378">
         <div class="how-grid">
           <div class="how-section">
             <h3>HOLES (1–7)</h3>
@@ -866,10 +881,13 @@
       <p class="seo-lead">
         Set up a 4–7 plate lock the way you see it on screen, mark how each plate drags its neighbours, and press <b>SOLVE LOCK</b>. Consecutive identical moves are grouped, so the result is easy to follow in-game.
       </p>
+      <p class="seo-lead">
+        Every failed chest in Gothic 1 Remake costs a lockpick, and lockpicks are scarce early game. A single misread link or a wrong-direction click can wreck a 30-second attempt and force you to leave the chest, rebuy picks, and walk all the way back. This <b>gothic remake lockpicking solver</b> removes the guesswork entirely: read the lock once on screen, press one button here, and follow the resulting sequence in-game. Because the solver plans the fewest legal plate presses for your exact configuration, including the same and opposite links between plates, you stop burning picks on chests the game has already shown you the answer to in its own UI.
+      </p>
     </section>
 
     <section class="seo-section" aria-labelledby="seoFeatures">
-      <h2 id="seoFeatures">Why Use This Gothic Remake Lockpick Solver</h2>
+      <h2 id="seoFeatures">Why Use This Gothic Remake Lockpicking Solver</h2>
       <div class="feature-grid">
         <div class="feature-card">
           <h3>Shortest Move Sequence</h3>
@@ -884,6 +902,9 @@
           <p>Static HTML, CSS, and JavaScript. Nothing is installed, no account is needed, and your lock setup never leaves the page.</p>
         </div>
       </div>
+      <p class="seo-lead">
+        Under the hood, the solver runs a bidirectional BFS that searches from your current plate positions forward and from the target state backward at the same time, meeting in the middle. Each candidate move sequence is scored on two costs, total number of presses and how many times you have to switch between plates, and the solver returns the sequence with the fewest switches first because that is what is fastest to execute in-game. Consecutive identical presses are grouped into a single step, so the output reads like a clean instruction list rather than a raw log of every click. Because the search runs in both directions at once, even 7-plate locks with dense link grids return a result in well under a second on a typical laptop, tablet, or phone, and the solver keeps your setup in the page, never sending it to a server.
+      </p>
     </section>
 
     <section class="seo-section" aria-labelledby="seoHowto">
@@ -893,6 +914,9 @@
         <li>On <b>Plate 1</b>, click the hole where the start pin currently sits. The target pin defaults to <b>Hole 4</b>.</li>
         <li>For each plate, set the <b>Link Grid</b> cells to <b>None</b>, <b>Same</b>, or <b>Opposite</b> based on what the linked plate does in-game. Press <b>SOLVE LOCK</b> and read the result in the right-hand panel.</li>
       </ol>
+      <p class="seo-lead">
+        Reading the link grid is the part most players get wrong on their first chest. <b>Same</b> means the linked plate moves in the same direction as the plate you press, so if Plate 1 moves right and the link from Plate 1 to Plate 2 is Same, Plate 2 also moves right. <b>Opposite</b> means the linked plate moves in the opposite direction, so Plate 2 would move left while Plate 1 moves right. <b>None</b> means the plates are not linked and pressing one does not move the other at all. On this page the link grid uses three states: None (empty cell), Same (S in green), and Opposite (O in red). Click any non-diagonal cell to cycle through them until it matches what you see in-game. If the solution you get here does not match the lock state in-game after pressing the listed moves, the most common cause is a single Same/Opposite mistake somewhere in the grid, with a wrong start pin on Plate 1 as the second most common cause.
+      </p>
     </section>
 
     <section class="seo-section" aria-labelledby="seoFaq">
@@ -919,6 +943,9 @@
           <p>Re-check the <b>Link Grid</b> first — a single Same/Opposite mistake cascades through the whole sequence. Then verify the <b>start pin</b> on Plate 1 matches what's on screen. The solver works from your exact configuration.</p>
         </details>
       </div>
+      <p class="seo-lead">
+        This <b>gothic remake lockpicking solver</b> started as a personal scratchpad while replaying Gothic 1 Remake's harder chests and grew into the public version on this page. It is fan-made, free to use, and not affiliated with, endorsed by, or sponsored by the publishers or developers of the game or its remake. Every lock in Gothic 1 Remake is solvable once its configuration is entered correctly, because the puzzle has no randomness, only hidden state. If the solver cannot return a solution for a configuration you entered, double-check the link grid first: a typo on a single Same/Opposite cell is by far the most common cause of an unsolvable lock, and fixing that cell usually makes the solver return a valid sequence immediately.
+      </p>
     </section>
 
     <p class="seo-disclaimer">
@@ -1727,6 +1754,56 @@
   buildPlateRows();
   renderChests();
   renderSolution(null);
+  </script>
+
+  <!-- 结构化数据 FAQPage：Google 搜索结果可能展开 5 个 Q&A 富媒体展示 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this gothic remake lockpicking solver free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The tool is free, runs entirely in your browser, and has no ads, accounts, or hidden limits."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which plate counts are supported?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "All standard Gothic 1 Remake locks: 4, 5, 6, and 7 plates. Pick the count that matches the chest and the rows update automatically."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to install anything or create an account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No install and no sign-up. Open the page, set up the lock, and solve. Your data stays on your device — nothing is sent to a server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I save a lock setup and reload it later?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Use the Save chest button in the right-hand CHESTS panel to store the current setup under a name, then reload it from the same panel next time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if the solution doesn't match the lock in-game?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Re-check the Link Grid first — a single Same/Opposite mistake cascades through the whole sequence. Then verify the start pin on Plate 1 matches what's on screen. The solver works from your exact configuration."
+        }
+      }
+    ]
+  }
   </script>
 </body>
 </html>
