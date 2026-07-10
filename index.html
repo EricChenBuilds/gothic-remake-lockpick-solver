@@ -717,6 +717,28 @@
     }
     .howto-list li b { color: #e8d090; }
 
+    /* ---------- howto 第 4 步：折叠样式保留 .faq-item 视觉，序号方框由 CSS 伪元素生成 ---------- */
+    .step-collapse details.faq-item summary {
+      padding-left: 56px;  /* 给方框留位（16 左白 + 24 方框 + 16 间距） */
+    }
+    .step-collapse details.faq-item summary::before {
+      content: "4";
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      background: transparent;
+      border: 1px solid #d4a040;
+      color: #d4a040;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
     /* ---------- FAQ（原生 <details>，自定义箭头） ---------- */
     .faq-list {
       max-width: 820px;
@@ -911,10 +933,10 @@
         <li>On <b>Plate 1</b>, click the hole where the start pin currently sits. The target pin defaults to <b>Hole 4</b>.</li>
         <li>For each plate, set the <b>Link Grid</b> cells to <b>None</b>, <b>Same</b>, or <b>Opposite</b> based on what the linked plate does in-game. Press <b>SOLVE LOCK</b> and read the result in the right-hand panel.</li>
       </ol>
-      <!-- 折叠项：复用 faq-item 样式 + 限宽 820px 跟 howto-list 对齐 -->
-      <div style="max-width: 820px">
+      <!-- 折叠项：复用 faq-item 样式 + 限宽 820px 跟 howto-list 对齐，序号方框由 CSS 伪元素生成 -->
+      <div class="step-collapse" style="max-width: 820px">
         <details class="faq-item">
-          <summary>4. Tips for reading the link grid in-game</summary>
+          <summary>Tips for reading the link grid in-game</summary>
           <p>Reading the link grid is the part most players get wrong on their first chest. <b>Same</b> means the linked plate moves in the same direction as the plate you press, so if Plate 1 moves right and the link from Plate 1 to Plate 2 is Same, Plate 2 also moves right. <b>Opposite</b> means the linked plate moves in the opposite direction, so Plate 2 would move left while Plate 1 moves right. <b>None</b> means the plates are not linked and pressing one does not move the other at all. On this page the link grid uses three states: None (empty cell), Same (S in green), and Opposite (O in red). Click any non-diagonal cell to cycle through them until it matches what you see in-game. If the solution you get here does not match the lock state in-game after pressing the listed moves, the most common cause is a single Same/Opposite mistake somewhere in the grid, with a wrong start pin on Plate 1 as the second most common cause.</p>
         </details>
       </div>
