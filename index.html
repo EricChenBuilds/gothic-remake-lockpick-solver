@@ -718,13 +718,14 @@
     .howto-list li b { color: #e8d090; }
 
     /* ---------- howto 第 4 步：折叠样式保留 .faq-item 视觉，序号方框由 CSS 伪元素生成 ---------- */
+    /* 尺寸参数对齐 .howto-list li::before：left 12px / padding-left 48px，方框与文字间距 12px */
     .step-collapse details.faq-item summary {
-      padding-left: 56px;  /* 给方框留位（16 左白 + 24 方框 + 16 间距） */
+      padding-left: 48px;  /* 给方框留位（12 左白 + 24 方框 + 12 间距，跟 howto-list 一致） */
     }
     .step-collapse details.faq-item summary::before {
       content: "4";
       position: absolute;
-      left: 16px;
+      left: 12px;
       top: 50%;
       transform: translateY(-50%);
       width: 24px;
