@@ -1555,6 +1555,8 @@
       lastSolution = null;
       renderSolution(null);
       btn.disabled = false;
+      // GA4 埋点：主超时（35s 兜底）
+      gtag('event', 'solve_lock', { plate_count: N, solve_status: 'timeout_main' });
     }, 35000);
 
     worker.onmessage = (e) => {
@@ -1567,6 +1569,8 @@
         status.textContent = 'Solve timeout (30s)';
         lastSolution = null;
         renderSolution(null);
+        // GA4 埋点：worker 内 30s 超时
+        gtag('event', 'solve_lock', { plate_count: N, solve_status: 'timeout' });
         return;
       }
 
@@ -1574,6 +1578,8 @@
         status.textContent = 'No solution for this lock';
         lastSolution = null;
         renderSolution(null);
+        // GA4 埋点：无可行解
+        gtag('event', 'solve_lock', { plate_count: N, solve_status: 'no_solution' });
         return;
       }
 
@@ -1582,6 +1588,8 @@
 
       const moves = solution.moves;
       status.textContent = `Solved in ${moves.length} moves`;
+      // GA4 埋点：求解成功（含 move_count 用于统计平均步数）
+      gtag('event', 'solve_lock', { plate_count: N, solve_status: 'success', move_count: moves.length });
 
       if (moves.length === 0) {
         return;
@@ -1603,6 +1611,8 @@
       status.textContent = 'Worker error';
       lastSolution = null;
       renderSolution(null);
+      // GA4 埋点：worker 异常
+      gtag('event', 'solve_lock', { plate_count: N, solve_status: 'error' });
     };
 
     worker.postMessage({ startState, effects, n: N });
@@ -1649,12 +1659,16 @@
     document.getElementById('solveStatus').textContent = '';
     lastSolution = null;
     renderSolution(null);
+    // GA4 埋点：用户重置当前 lock 配置
+    gtag('event', 'reset', { plate_count: N });
   });
 
   /* ---------- HOW IT WORKS Modal ---------- */
   const howModal = document.getElementById('howModal');
   document.getElementById('howBtn').addEventListener('click', () => {
     howModal.style.display = 'flex';
+    // GA4 埋点：用户点击查看玩法说明
+    gtag('event', 'how_it_works_open');
   });
   document.getElementById('howModalClose').addEventListener('click', () => {
     howModal.style.display = 'none';
@@ -1771,6 +1785,8 @@
       list.push(chest);
     }
     saveChests(list);
+    // GA4 埋点：保存锁配置（区分新建 vs 覆盖，含 chest_name_length 用于统计命名长度）
+    gtag('event', 'save_chest', { action: existing >= 0 ? 'overwrite' : 'save', chest_name_length: name.length });
     renderChests();
     input.value = '';
   });
