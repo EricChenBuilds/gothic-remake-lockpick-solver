@@ -801,6 +801,55 @@
       margin-top: 16px;
       border-top: 1px solid rgba(255, 255, 255, 0.04);
     }
+
+    /* ---------- Footer（支持外链，新增外链只需在 .footer-links 里加 <li>） ---------- */
+    .site-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 28px;
+      padding: 28px 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px 48px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.6;
+      letter-spacing: 1px;
+    }
+    .footer-brand b {
+      color: #888;
+      font-weight: 600;
+    }
+    .footer-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 28px;
+    }
+    .footer-links a {
+      color: #b0b0c0;
+      font-size: 13px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: color 0.12s, border-color 0.12s;
+      border-bottom: 1px solid transparent;
+    }
+    .footer-links a:hover {
+      color: #d4a040;
+      border-bottom-color: #d4a040;
+    }
+    @media (max-width: 700px) {
+      .site-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -976,6 +1025,19 @@
     <p class="seo-disclaimer">
       Fan-made tool. Not affiliated with, endorsed by, or sponsored by the publishers or developers of Gothic 1 Remake. "Gothic" and "Gothic Remake" are trademarks of their respective owners. All game-related content belongs to its respective owners.
     </p>
+
+    <!--
+      Footer 外链区：这些链接均为 dofollow（未加 rel="nofollow"）。
+      新增外链时，在 <ul class="footer-links"> 中追加一个 <li><a href="...">名称</a></li> 即可。
+    -->
+    <footer class="site-footer">
+      <p class="footer-brand">
+        <b>Gothic Remake Lockpicking Solver</b> – Free browser tool, no ads, no account.
+      </p>
+      <ul class="footer-links">
+        <li><a href="https://gesturesynth.art" target="_blank" rel="noopener">Gesture Synth</a></li>
+      </ul>
+    </footer>
   </div>
 
   <script>
